@@ -1,0 +1,227 @@
+#include "SingleAxisControl.hpp";
+
+int err;
+char errString[256];
+int counter;
+
+const int maxCh = 10;
+
+WMX3Api wmxlib;
+CoreMotion wmxlib_cm(&wmxlib);
+Io wxmlib_io(&wmxlib);
+CoreMotionStatus st;
+Motion::PosCommand pos;
+
+void WMXMain::Init() {
+    printf("Starting application...\n");
+    err = wmxlib.CreateDevice(_T("C:\\Program Files\\SoftServo\\WMX3"), DeviceType::DeviceTypeNormal);
+    if (err != ErrorCode::None) {
+        wmxlib.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to create device. Error=%d (%s)\n", err, errString);
+        WMXMain::Exit();
+        return;
+    }
+
+    err = wmxlib.StartCommunication(5000); //Wait up to 5 seconds for communication to start
+    if (err != ErrorCode::None) {
+        wmxlib.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to start communication. Error=%d (%s)\n", err, errString);
+        WMXMain::Exit();
+        return;
+    }
+    printf("WXM lib initialized\n");
+    return;
+}
+
+void WMXMain::Exit() {
+    printf("Closing application...\n");
+    err = wmxlib.StopCommunication();
+    if (err != ErrorCode::None) {
+        wmxlib.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to stop communication. Error=%d (%s)\n", err, errString);
+    }
+
+    err = wmxlib.CloseDevice();
+    if (err != ErrorCode::None) {
+        wmxlib.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to close device. Error=%d (%s)\n", err, errString);
+    }
+}
+
+#pragma region Definition of MotorControl class
+//----------------------------------------------------------------------------
+// Definition of MotorControl class
+//----------------------------------------------------------------------------
+void MotorControl::ServoOn(int axis) {
+    err = wmxlib_cm.axisControl->SetServoOn(axis, 1);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to set servo off. Error=%d (%s)\n", err, errString);
+    }
+    //Wait for servo to turn off
+    int counter = 1000;
+    do {
+        err = wmxlib_cm.GetStatus(&st);
+        if (err != ErrorCode::None) {
+            wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+            printf("Failed to get status. Error=%d (%s)\n", err, errString);
+        }
+        Sleep(10);
+        counter--;
+    } while (counter > 0 && st.axesStatus[axis].servoOn == 1);
+    printf("Axis %i SVON\n", axis + 1);
+    return;
+}
+
+void MotorControl::ServoOff(int axis) {
+    err = wmxlib_cm.axisControl->SetServoOn(axis, 0);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to set servo off. Error=%d (%s)\n", err, errString);
+    }
+    //Wait for servo to turn off
+    int counter = 1000; //Counter to prevent infinite loop
+    do {
+        err = wmxlib_cm.GetStatus(&st);
+        if (err != ErrorCode::None) {
+            wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+            printf("Failed to get status. Error=%d (%s)\n", err, errString);
+        }
+        Sleep(10);
+        counter--;
+    } while (counter > 0 && st.axesStatus[axis].servoOn == 1);
+    printf("Axis %i SVOFF\n", axis + 1);
+    return;
+}
+
+void MotorControl::MoveAbs(int axis, ProfileType::T type, double vel, int acc, int dec, double target) {
+    pos.axis = axis;
+    pos.profile.type = type;
+    pos.profile.velocity = vel;
+    pos.profile.acc = acc;
+    pos.profile.dec = dec;
+    pos.target = target;
+    err = wmxlib_cm.motion->StartPos(&pos);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to execute motion. Error=%d (%s)\n", err, errString);
+        return;
+    }
+    printf("Axis %i MOVE ABS Pos: %.2f Vel %.2f\n", axis + 1, target, vel);
+    return;
+}
+
+void MotorControl::MoveRel(int axis, ProfileType::T type, double vel, int acc, int dec, double target) {
+    pos.axis = axis;
+    pos.profile.type = type;
+    pos.profile.velocity = vel;
+    pos.profile.acc = acc;
+    pos.profile.dec = dec;
+    pos.target = target;
+    err = wmxlib_cm.motion->StartMov(&pos);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to execute motion. Error=%d (%s)\n", err, errString);
+        return;
+    }
+    printf("Axis %i MOVE REL Pos: %.2f Vel %.2f\n", axis + 1, target, vel);
+    return;
+}
+
+void MotorControl::Stop(int axis) {
+    err = wmxlib_cm.motion->Stop(axis);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to stop axis. Error=%d (%s)\n", err, errString);
+        return;
+    }
+    printf("Axis %i STOP\n", axis + 1);
+    return;
+}
+
+// havent check is it working
+void MotorControl::GoToHome() {
+    // Homing
+    for (int i = 0; i < 5; i++) {
+        printf("Homing axis %i\n", i);
+        ServoOn(0);
+        Config::HomeParam homeParam;
+        wmxlib_cm.config->GetHomeParam(0, &homeParam);
+        homeParam.homeType = Config::HomeType::CurrentPos;
+        wmxlib_cm.config->SetHomeParam(0, &homeParam);
+        wmxlib_cm.home->StartHome(0);
+        wmxlib_cm.motion->Wait(0);
+    }
+}
+#pragma endregion
+
+//----------------------------------------------------------------------------
+// Definition of InputHandler class
+//----------------------------------------------------------------------------
+
+void InputHandler::GetInputChannel(int chNum, WORD *data) {
+    unsigned char buff[2];
+    wxmlib_io.GetInBytes(chNum * 2, 2, buff);
+    *data = buff[0] | (buff[1] << 8);
+}
+
+void InputHandler::GetInputChannelArr(int startNum, int chSize, WORD *data) {
+    unsigned char buff[maxCh*2];
+    wxmlib_io.GetInBytes(startNum * 2, chSize * 2, buff);
+
+    for (int i = 0; i < chSize; i++) {
+        data[i] = buff[2 * i] | (buff[i * 2 + 1] << 8);
+    }
+}
+
+//----------------------------------------------------------------------------
+// Definition of OutputHandler class
+//----------------------------------------------------------------------------
+
+void OutputHandler::GetOutputChannel(int chNum, WORD *data) {
+    unsigned char buff[2];
+    wxmlib_io.GetOutBytes(chNum*2, 2, buff);
+    *data = buff[0] | (buff[1] << 8);
+}
+
+void OutputHandler::GetOutputChannelArr(int startNum, int chSize, WORD *data) {
+    unsigned char buff[maxCh*2];
+    wxmlib_io.GetOutBytes(startNum * 2, chSize * 2, buff);
+
+    for (int i = 0; i < chSize; i++) {
+        data[i] = buff[2 * i] | (buff[i * 2 + 1] << 8);
+    }
+}
+
+void OutputHandler::SetOutputBit(int outch, int outbit, int outvalue) {
+    int charIdx = 0;
+    int outBit_ori = outbit;
+    if (outch) charIdx = 2;
+    if (outbit >= 8) {
+        charIdx++;
+        outbit -= 8;
+    }
+    err = wxmlib_io.SetOutBit(charIdx, outbit, outvalue);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to set output. Error=%d (%s)\n", err, errString);
+        return;
+    }
+    printf("Set Output Ch: %i Bit: %i Value: %i\n", outch + 1, outBit_ori, outvalue);
+    return;
+}
+
+void OutputHandler::SetOutputChannel(int chNum, WORD data) {
+    unsigned char first = data & 0x00FF;
+    unsigned char second = (data >> 8) & 0x00FF;
+
+    err = wxmlib_io.SetOutByte(chNum*2, first);
+    err = wxmlib_io.SetOutByte(chNum*2+1, second);
+    if (err != ErrorCode::None) {
+        wmxlib_cm.ErrorToString(err, errString, sizeof(errString));
+        printf("Failed to set output. Error=%d (%s)\n", err, errString);
+        return;
+    }
+    printf("Set Output Channel\n");
+    
+}
