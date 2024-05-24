@@ -28,22 +28,22 @@
         /// </summary>
         private void InitializeComponent() {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle17 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle18 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle19 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle20 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle21 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle22 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle23 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle24 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle25 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle26 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle27 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle28 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle29 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle30 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle31 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle32 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tpJobList = new TabPage();
             buttonBrowse = new Button();
@@ -440,8 +440,9 @@
             cbSetOut15.Name = "cbSetOut15";
             cbSetOut15.Size = new Size(15, 14);
             cbSetOut15.TabIndex = 30;
+            cbSetOut15.Tag = "15";
             cbSetOut15.UseVisualStyleBackColor = true;
-            cbSetOut15.CheckedChanged += cbSetOut15_CheckedChanged;
+            cbSetOut15.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut14
             // 
@@ -450,8 +451,9 @@
             cbSetOut14.Name = "cbSetOut14";
             cbSetOut14.Size = new Size(15, 14);
             cbSetOut14.TabIndex = 29;
+            cbSetOut14.Tag = "14";
             cbSetOut14.UseVisualStyleBackColor = true;
-            cbSetOut14.CheckedChanged += cbSetOut14_CheckedChanged;
+            cbSetOut14.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut13
             // 
@@ -460,8 +462,9 @@
             cbSetOut13.Name = "cbSetOut13";
             cbSetOut13.Size = new Size(15, 14);
             cbSetOut13.TabIndex = 28;
+            cbSetOut13.Tag = "13";
             cbSetOut13.UseVisualStyleBackColor = true;
-            cbSetOut13.CheckedChanged += cbSetOut13_CheckedChanged;
+            cbSetOut13.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut12
             // 
@@ -470,8 +473,9 @@
             cbSetOut12.Name = "cbSetOut12";
             cbSetOut12.Size = new Size(15, 14);
             cbSetOut12.TabIndex = 27;
+            cbSetOut12.Tag = "12";
             cbSetOut12.UseVisualStyleBackColor = true;
-            cbSetOut12.CheckedChanged += cbSetOut12_CheckedChanged;
+            cbSetOut12.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut11
             // 
@@ -480,8 +484,9 @@
             cbSetOut11.Name = "cbSetOut11";
             cbSetOut11.Size = new Size(15, 14);
             cbSetOut11.TabIndex = 26;
+            cbSetOut11.Tag = "11";
             cbSetOut11.UseVisualStyleBackColor = true;
-            cbSetOut11.CheckedChanged += cbSetOut11_CheckedChanged;
+            cbSetOut11.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut10
             // 
@@ -490,8 +495,9 @@
             cbSetOut10.Name = "cbSetOut10";
             cbSetOut10.Size = new Size(15, 14);
             cbSetOut10.TabIndex = 25;
+            cbSetOut10.Tag = "10";
             cbSetOut10.UseVisualStyleBackColor = true;
-            cbSetOut10.CheckedChanged += cbSetOut10_CheckedChanged;
+            cbSetOut10.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut9
             // 
@@ -500,8 +506,9 @@
             cbSetOut9.Name = "cbSetOut9";
             cbSetOut9.Size = new Size(15, 14);
             cbSetOut9.TabIndex = 24;
+            cbSetOut9.Tag = "9";
             cbSetOut9.UseVisualStyleBackColor = true;
-            cbSetOut9.CheckedChanged += cbSetOut9_CheckedChanged;
+            cbSetOut9.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut8
             // 
@@ -510,8 +517,9 @@
             cbSetOut8.Name = "cbSetOut8";
             cbSetOut8.Size = new Size(15, 14);
             cbSetOut8.TabIndex = 23;
+            cbSetOut8.Tag = "8";
             cbSetOut8.UseVisualStyleBackColor = true;
-            cbSetOut8.CheckedChanged += cbSetOut8_CheckedChanged;
+            cbSetOut8.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut7
             // 
@@ -520,8 +528,9 @@
             cbSetOut7.Name = "cbSetOut7";
             cbSetOut7.Size = new Size(15, 14);
             cbSetOut7.TabIndex = 22;
+            cbSetOut7.Tag = "7";
             cbSetOut7.UseVisualStyleBackColor = true;
-            cbSetOut7.CheckedChanged += cbSetOut7_CheckedChanged;
+            cbSetOut7.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut6
             // 
@@ -530,8 +539,9 @@
             cbSetOut6.Name = "cbSetOut6";
             cbSetOut6.Size = new Size(15, 14);
             cbSetOut6.TabIndex = 21;
+            cbSetOut6.Tag = "6";
             cbSetOut6.UseVisualStyleBackColor = true;
-            cbSetOut6.CheckedChanged += cbSetOut6_CheckedChanged;
+            cbSetOut6.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut5
             // 
@@ -540,8 +550,9 @@
             cbSetOut5.Name = "cbSetOut5";
             cbSetOut5.Size = new Size(15, 14);
             cbSetOut5.TabIndex = 20;
+            cbSetOut5.Tag = "5";
             cbSetOut5.UseVisualStyleBackColor = true;
-            cbSetOut5.CheckedChanged += cbSetOut5_CheckedChanged;
+            cbSetOut5.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut4
             // 
@@ -550,8 +561,9 @@
             cbSetOut4.Name = "cbSetOut4";
             cbSetOut4.Size = new Size(15, 14);
             cbSetOut4.TabIndex = 19;
+            cbSetOut4.Tag = "4";
             cbSetOut4.UseVisualStyleBackColor = true;
-            cbSetOut4.CheckedChanged += cbSetOut4_CheckedChanged;
+            cbSetOut4.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut3
             // 
@@ -560,8 +572,9 @@
             cbSetOut3.Name = "cbSetOut3";
             cbSetOut3.Size = new Size(15, 14);
             cbSetOut3.TabIndex = 18;
+            cbSetOut3.Tag = "3";
             cbSetOut3.UseVisualStyleBackColor = true;
-            cbSetOut3.CheckedChanged += cbSetOut3_CheckedChanged;
+            cbSetOut3.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut2
             // 
@@ -570,8 +583,9 @@
             cbSetOut2.Name = "cbSetOut2";
             cbSetOut2.Size = new Size(15, 14);
             cbSetOut2.TabIndex = 17;
+            cbSetOut2.Tag = "2";
             cbSetOut2.UseVisualStyleBackColor = true;
-            cbSetOut2.CheckedChanged += cbSetOut2_CheckedChanged;
+            cbSetOut2.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut1
             // 
@@ -580,8 +594,9 @@
             cbSetOut1.Name = "cbSetOut1";
             cbSetOut1.Size = new Size(15, 14);
             cbSetOut1.TabIndex = 16;
+            cbSetOut1.Tag = "1";
             cbSetOut1.UseVisualStyleBackColor = true;
-            cbSetOut1.CheckedChanged += cbSetOut1_CheckedChanged;
+            cbSetOut1.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // cbSetOut0
             // 
@@ -590,8 +605,9 @@
             cbSetOut0.Name = "cbSetOut0";
             cbSetOut0.Size = new Size(15, 14);
             cbSetOut0.TabIndex = 15;
+            cbSetOut0.Tag = "0";
             cbSetOut0.UseVisualStyleBackColor = true;
-            cbSetOut0.CheckedChanged += cbSetOut0_CheckedChanged;
+            cbSetOut0.CheckedChanged += cbSetOut_CheckedChanged;
             // 
             // dgvMotorStat
             // 
@@ -599,30 +615,30 @@
             dgvMotorStat.AllowUserToDeleteRows = false;
             dgvMotorStat.AllowUserToResizeColumns = false;
             dgvMotorStat.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvMotorStat.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle17.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle17.BackColor = SystemColors.Control;
+            dataGridViewCellStyle17.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle17.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle17.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle17.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle17.WrapMode = DataGridViewTriState.True;
+            dgvMotorStat.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
             dgvMotorStat.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMotorStat.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4 });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dgvMotorStat.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle18.BackColor = SystemColors.Window;
+            dataGridViewCellStyle18.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle18.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle18.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = DataGridViewTriState.False;
+            dgvMotorStat.DefaultCellStyle = dataGridViewCellStyle18;
             dgvMotorStat.Location = new Point(563, 82);
             dgvMotorStat.Name = "dgvMotorStat";
             dgvMotorStat.ReadOnly = true;
             dgvMotorStat.RowHeadersVisible = false;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvMotorStat.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle19.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvMotorStat.RowsDefaultCellStyle = dataGridViewCellStyle19;
             dgvMotorStat.Size = new Size(143, 182);
             dgvMotorStat.TabIndex = 14;
             // 
@@ -648,20 +664,20 @@
             dgvOutput.AllowUserToDeleteRows = false;
             dgvOutput.AllowUserToResizeColumns = false;
             dgvOutput.AllowUserToResizeRows = false;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = SystemColors.Control;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            dgvOutput.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle20.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle20.BackColor = SystemColors.Control;
+            dataGridViewCellStyle20.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle20.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle20.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle20.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle20.WrapMode = DataGridViewTriState.True;
+            dgvOutput.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle20;
             dgvOutput.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvOutput.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
             dgvOutput.Location = new Point(307, 82);
             dgvOutput.Name = "dgvOutput";
             dgvOutput.RowHeadersVisible = false;
-            dgvOutput.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dgvOutput.RowsDefaultCellStyle = dataGridViewCellStyle19;
             dgvOutput.Size = new Size(143, 432);
             dgvOutput.TabIndex = 13;
             // 
@@ -685,30 +701,30 @@
             dgvInput.AllowUserToDeleteRows = false;
             dgvInput.AllowUserToResizeColumns = false;
             dgvInput.AllowUserToResizeRows = false;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            dgvInput.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle21.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle21.BackColor = SystemColors.Control;
+            dataGridViewCellStyle21.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle21.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle21.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle21.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle21.WrapMode = DataGridViewTriState.True;
+            dgvInput.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle21;
             dgvInput.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvInput.Columns.AddRange(new DataGridViewColumn[] { Bit, dgvInValue });
             dgvInput.Location = new Point(86, 82);
             dgvInput.Name = "dgvInput";
             dgvInput.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = SystemColors.Control;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle6.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
-            dgvInput.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle22.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle22.BackColor = SystemColors.Control;
+            dataGridViewCellStyle22.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle22.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle22.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle22.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle22.WrapMode = DataGridViewTriState.True;
+            dgvInput.RowHeadersDefaultCellStyle = dataGridViewCellStyle22;
             dgvInput.RowHeadersVisible = false;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvInput.RowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle23.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvInput.RowsDefaultCellStyle = dataGridViewCellStyle23;
             dgvInput.Size = new Size(143, 432);
             dgvInput.TabIndex = 12;
             // 
@@ -1246,30 +1262,30 @@
             dgvACZStatus.AllowUserToDeleteRows = false;
             dgvACZStatus.AllowUserToResizeColumns = false;
             dgvACZStatus.AllowUserToResizeRows = false;
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = SystemColors.Control;
-            dataGridViewCellStyle8.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle8.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
-            dgvACZStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle24.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle24.BackColor = SystemColors.Control;
+            dataGridViewCellStyle24.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle24.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle24.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle24.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle24.WrapMode = DataGridViewTriState.True;
+            dgvACZStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle24;
             dgvACZStatus.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvACZStatus.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn15, dataGridViewTextBoxColumn16 });
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle9.BackColor = SystemColors.Window;
-            dataGridViewCellStyle9.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle9.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.False;
-            dgvACZStatus.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle25.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle25.BackColor = SystemColors.Window;
+            dataGridViewCellStyle25.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle25.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle25.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle25.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle25.WrapMode = DataGridViewTriState.False;
+            dgvACZStatus.DefaultCellStyle = dataGridViewCellStyle25;
             dgvACZStatus.Location = new Point(473, 71);
             dgvACZStatus.Name = "dgvACZStatus";
             dgvACZStatus.ReadOnly = true;
             dgvACZStatus.RowHeadersVisible = false;
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvACZStatus.RowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle26.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvACZStatus.RowsDefaultCellStyle = dataGridViewCellStyle26;
             dgvACZStatus.Size = new Size(143, 182);
             dgvACZStatus.TabIndex = 84;
             // 
@@ -1305,30 +1321,30 @@
             dgvACYStatus.AllowUserToDeleteRows = false;
             dgvACYStatus.AllowUserToResizeColumns = false;
             dgvACYStatus.AllowUserToResizeRows = false;
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle11.BackColor = SystemColors.Control;
-            dataGridViewCellStyle11.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle11.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle11.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = DataGridViewTriState.True;
-            dgvACYStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle27.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle27.BackColor = SystemColors.Control;
+            dataGridViewCellStyle27.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle27.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle27.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle27.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle27.WrapMode = DataGridViewTriState.True;
+            dgvACYStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle27;
             dgvACYStatus.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvACYStatus.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn13, dataGridViewTextBoxColumn14 });
-            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle12.BackColor = SystemColors.Window;
-            dataGridViewCellStyle12.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle12.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle12.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = DataGridViewTriState.False;
-            dgvACYStatus.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle28.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle28.BackColor = SystemColors.Window;
+            dataGridViewCellStyle28.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle28.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle28.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle28.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle28.WrapMode = DataGridViewTriState.False;
+            dgvACYStatus.DefaultCellStyle = dataGridViewCellStyle28;
             dgvACYStatus.Location = new Point(270, 71);
             dgvACYStatus.Name = "dgvACYStatus";
             dgvACYStatus.ReadOnly = true;
             dgvACYStatus.RowHeadersVisible = false;
-            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvACYStatus.RowsDefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle29.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvACYStatus.RowsDefaultCellStyle = dataGridViewCellStyle29;
             dgvACYStatus.Size = new Size(143, 182);
             dgvACYStatus.TabIndex = 82;
             // 
@@ -1364,30 +1380,30 @@
             dgvACXStatus.AllowUserToDeleteRows = false;
             dgvACXStatus.AllowUserToResizeColumns = false;
             dgvACXStatus.AllowUserToResizeRows = false;
-            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle14.BackColor = SystemColors.Control;
-            dataGridViewCellStyle14.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle14.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle14.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle14.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle14.WrapMode = DataGridViewTriState.True;
-            dgvACXStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle30.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle30.BackColor = SystemColors.Control;
+            dataGridViewCellStyle30.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle30.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle30.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle30.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle30.WrapMode = DataGridViewTriState.True;
+            dgvACXStatus.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle30;
             dgvACXStatus.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvACXStatus.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn11, dataGridViewTextBoxColumn12 });
-            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle15.BackColor = SystemColors.Window;
-            dataGridViewCellStyle15.Font = new Font("Segoe UI", 12F);
-            dataGridViewCellStyle15.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle15.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle15.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle15.WrapMode = DataGridViewTriState.False;
-            dgvACXStatus.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle31.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle31.BackColor = SystemColors.Window;
+            dataGridViewCellStyle31.Font = new Font("Segoe UI", 12F);
+            dataGridViewCellStyle31.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle31.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle31.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle31.WrapMode = DataGridViewTriState.False;
+            dgvACXStatus.DefaultCellStyle = dataGridViewCellStyle31;
             dgvACXStatus.Location = new Point(57, 71);
             dgvACXStatus.Name = "dgvACXStatus";
             dgvACXStatus.ReadOnly = true;
             dgvACXStatus.RowHeadersVisible = false;
-            dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvACXStatus.RowsDefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle32.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvACXStatus.RowsDefaultCellStyle = dataGridViewCellStyle32;
             dgvACXStatus.Size = new Size(143, 182);
             dgvACXStatus.TabIndex = 80;
             // 
