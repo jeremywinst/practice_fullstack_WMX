@@ -68,6 +68,9 @@ namespace HMI {
         const int MaxInChCount = 10;
         const int MaxOutChCount = 10;
 
+        // initialize control collections
+        private CheckBox[] cbSetOut_collecttion;
+
         public Form1() {
             InitializeComponent();
 
@@ -90,8 +93,15 @@ namespace HMI {
             // titlebar name
             this.Text = "Job Management";
 
+            // initizalize control collections
+            cbSetOut_collecttion = new CheckBox[] {
+                cbSetOut0, cbSetOut1, cbSetOut2, cbSetOut3,
+                cbSetOut4, cbSetOut5, cbSetOut6, cbSetOut7,
+                cbSetOut8, cbSetOut9, cbSetOut10, cbSetOut11,
+                cbSetOut12, cbSetOut13, cbSetOut14, cbSetOut15 };
+
             // init MMF
-            MotorIOMMF = new MMFHandler<MotorIOStruct> ("MotorIOFileMap", "MotorIOMut");
+            MotorIOMMF = new MMFHandler<MotorIOStruct>("MotorIOFileMap", "MotorIOMut");
             CmdMMF = new MMFHandler<CmdStruct>("CmdFileMap", "CmdMut");
 
             // calculate how many axis we have and initialize motor ComboBox tab 2 and 3 from axis.ini
@@ -182,11 +192,6 @@ namespace HMI {
         }
 
         private void OutputCB_Init() {
-            CheckBox[] cbSetOut_collecttion = {cbSetOut0, cbSetOut1, cbSetOut2, cbSetOut3,
-                                               cbSetOut4, cbSetOut5, cbSetOut6, cbSetOut7,
-                                               cbSetOut8, cbSetOut9, cbSetOut10, cbSetOut11,
-                                               cbSetOut12, cbSetOut13, cbSetOut14, cbSetOut15};
-
             for (int i = 0; i < 16; i++) cbSetOut_collecttion[i].Checked = (MotorIOData.DOch & (1 << i)) != 0;
         }
 
@@ -298,16 +303,14 @@ namespace HMI {
 
         private void cbOutput_SelectedIndexChanged(object sender, EventArgs e) {
             //Debug.WriteLine(cbOutput.SelectedIndex);
+            MotorIOMMF.ReadLock(ref MotorIOData);
             MotorIOData.OutChSelected = cbOutput.SelectedIndex;
             //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
+            MotorIOMMF.Write(ref MotorIOData);
+            // let the C++ update the DIO data
+            Thread.Sleep(10); 
+            // then update the output combo cox
             MotorIOMMF.ReadRelease(ref MotorIOData);
-            Thread.Sleep(100);
-
-            CheckBox[] cbSetOut_collecttion = {cbSetOut0, cbSetOut1, cbSetOut2, cbSetOut3,
-                                               cbSetOut4, cbSetOut5, cbSetOut6, cbSetOut7,
-                                               cbSetOut8, cbSetOut9, cbSetOut10, cbSetOut11,
-                                               cbSetOut12, cbSetOut13, cbSetOut14, cbSetOut15};
-            // update output
             for (int i = 0; i < 16; i++) cbSetOut_collecttion[i].Checked = (MotorIOData.DOch & (1 << i)) != 0;
         }
 
@@ -408,7 +411,7 @@ namespace HMI {
             CmdData.ComPos = pos;
             CmdData.ComVel = vel;
             //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-            CmdMMF.Write(ref  CmdData);
+            CmdMMF.Write(ref CmdData);
 
             Debug.WriteLine(CmdData.ComPos);
         }
@@ -486,7 +489,7 @@ namespace HMI {
             // (otherwise when write the MotorIOData.axis other value will be not initialized)
             //MotorIOAccessor.Read<MotorIOStruct>(0, out MotorIOData);
             //CmdAccessor.Read<CmdStruct>(0, out CmdData);
-            MotorIOMMF.ReadRelease(ref MotorIOData);
+            //MotorIOMMF.ReadRelease(ref MotorIOData);
             CmdMMF.ReadRelease(ref CmdData);
 
             // we only use 1 shared memory the store the status of 4 motors/axises (only store the status of 1 motor/axis at a time)
@@ -494,7 +497,7 @@ namespace HMI {
             // only the status of this axis will be stored in the shared memory
             MotorIOMMF.ReadLock(ref MotorIOData);
             MotorIOData.InChSelected = cbInput.SelectedIndex;
-            MotorIOData.OutChSelected = cbOutput.SelectedIndex;
+            //MotorIOData.OutChSelected = cbOutput.SelectedIndex; // maybe the output no need to do this because the source is from HMI so no need to update everytime
             //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
             MotorIOMMF.Write(ref MotorIOData);
 
@@ -678,7 +681,7 @@ namespace HMI {
                 tbACStatus.Text = "Homing";
             }
         }
-        
+
         private void cbSetOut_CheckedChanged(object sender, EventArgs e) {
 
             if (selected_RB != 0) return;
@@ -722,10 +725,6 @@ namespace HMI {
             // write new data
             bool[] cbOut1 = new bool[8];
             bool[] cbOut2 = new bool[8];
-            CheckBox[] cbSetOut_collecttion = {cbSetOut0, cbSetOut1, cbSetOut2, cbSetOut3,
-                                               cbSetOut4, cbSetOut5, cbSetOut6, cbSetOut7,
-                                               cbSetOut8, cbSetOut9, cbSetOut10, cbSetOut11,
-                                               cbSetOut12, cbSetOut13, cbSetOut14, cbSetOut15};
 
             for (int j = 0; j < 8; j++) cbOut1[j] = cbSetOut_collecttion[j].Checked;
             for (int j = 8; j < 16; j++) cbOut2[j - 8] = cbSetOut_collecttion[j].Checked;
