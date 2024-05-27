@@ -47,57 +47,19 @@ namespace HMI {
         const int ACSTAT_STOP = 4;
         const int ACSTAT_HOMING = 5;
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)] // Ensure fields are laid out in memory sequentially
-        public struct MotorData {
-            [MarshalAs(UnmanagedType.I1)]
-            public bool SVON;
-            public double pos, vel;
-            public int alarm;
-            [MarshalAs(UnmanagedType.I1)]
-            public bool limit_min;
-            [MarshalAs(UnmanagedType.I1)]
-            public bool limit_max;
-        }
+        //// define and register to the memory mapped file
+        //static MemoryMappedFile MotorIOMMF = MemoryMappedFile.CreateOrOpen("MotorIOFileMap", 1024, MemoryMappedFileAccess.ReadWriteExecute, MemoryMappedFileOptions.None, System.IO.HandleInheritability.Inheritable);
+        //static MemoryMappedViewAccessor MotorIOAccessor = MotorIOMMF.CreateViewAccessor();
+        //MotorIOStruct MotorIOData;
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)] // Ensure fields are laid out in memory sequentially
-        // initialize struct for memory mapped file
-        public struct MotorIOStruct {
-            public MotorData Motor0;
-            public MotorData Motor1;
-            public MotorData Motor2;
-            public MotorData Motor3;
-            public MotorData Motor4;
-            public int DIO_channel;
-            public int MotorCount, InChCount, OutChCount;
-            public int InChSelected, OutChSelected;
-            public ushort DIch, DOch;
-            //public byte DI0, DI1, DI2, DI3;
-            //public byte DO0, DO1, DO2, DO3;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)] // Ensure fields are laid out in memory sequentially
-        public struct CmdStruct {
-            public int COMMAND;
-            public int ACSTAT;
-            public int axis;
-            public double ComPos, ComVel;
-            public ushort OutChValue;
-            public int OutBit, OutValue, OutCh;
-            public int OutChArrStart, OutChArrSize;
-            public double PosX1, PosX2, PosX3;
-            public double PosY1, PosY2, PosY3;
-            public double PosZ1, PosZ2;
-            [MarshalAs(UnmanagedType.I1)]
-            public bool is_closed;
-        }
+        //static MemoryMappedFile CmdMMF = MemoryMappedFile.CreateOrOpen("CmdFileMap", 1024, MemoryMappedFileAccess.ReadWriteExecute, MemoryMappedFileOptions.None, System.IO.HandleInheritability.Inheritable);
+        //static MemoryMappedViewAccessor CmdAccessor = CmdMMF.CreateViewAccessor();
+        //CmdStruct CmdData;
 
         // define and register to the memory mapped file
-        static MemoryMappedFile MotorIOMMF = MemoryMappedFile.CreateOrOpen("MotorIOFileMap", 1024, MemoryMappedFileAccess.ReadWriteExecute, MemoryMappedFileOptions.None, System.IO.HandleInheritability.Inheritable);
-        static MemoryMappedViewAccessor MotorIOAccessor = MotorIOMMF.CreateViewAccessor();
+        MMFHandler<MotorIOStruct> MotorIOMMF;
+        MMFHandler<CmdStruct> CmdMMF;
         MotorIOStruct MotorIOData;
-
-        static MemoryMappedFile CmdMMF = MemoryMappedFile.CreateOrOpen("CmdFileMap", 1024, MemoryMappedFileAccess.ReadWriteExecute, MemoryMappedFileOptions.None, System.IO.HandleInheritability.Inheritable);
-        static MemoryMappedViewAccessor CmdAccessor = CmdMMF.CreateViewAccessor();
         CmdStruct CmdData;
 
         // initialize other param
@@ -128,6 +90,10 @@ namespace HMI {
             // titlebar name
             this.Text = "Job Management";
 
+            // init MMF
+            MotorIOMMF = new MMFHandler<MotorIOStruct> ("MotorIOFileMap", "MotorIOMut");
+            CmdMMF = new MMFHandler<CmdStruct>("CmdFileMap", "CmdMut");
+
             // calculate how many axis we have and initialize motor ComboBox tab 2 and 3 from axis.ini
             foreach (var axis_name in axis_data["axis"]) {
                 cbAxisName.Items.Add(axis_name.KeyName);
@@ -136,14 +102,19 @@ namespace HMI {
             }
 
             // initilize shared memory
+            MotorIOMMF.ReadLock(ref MotorIOData);
             MotorIOData.MotorCount = MaxMotorCount;
             MotorIOData.InChCount = MaxInChCount;
             MotorIOData.OutChCount = MaxOutChCount;
             MotorIOData.InChSelected = 0;
             MotorIOData.OutChSelected = 0;
+            //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
+            MotorIOMMF.Write(ref MotorIOData);
+
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.is_closed = false;
-            MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
 
             // start the C++ MotionControl.exe
             string[] Path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location).Split("HMI");
@@ -328,7 +299,8 @@ namespace HMI {
         private void cbOutput_SelectedIndexChanged(object sender, EventArgs e) {
             //Debug.WriteLine(cbOutput.SelectedIndex);
             MotorIOData.OutChSelected = cbOutput.SelectedIndex;
-            MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
+            //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
+            MotorIOMMF.ReadRelease(ref MotorIOData);
             Thread.Sleep(100);
 
             CheckBox[] cbSetOut_collecttion = {cbSetOut0, cbSetOut1, cbSetOut2, cbSetOut3,
@@ -430,11 +402,13 @@ namespace HMI {
 
 
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_MOVE_ABS;
             CmdData.axis = cbAxisName.SelectedIndex;
             CmdData.ComPos = pos;
             CmdData.ComVel = vel;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref  CmdData);
 
             Debug.WriteLine(CmdData.ComPos);
         }
@@ -451,32 +425,40 @@ namespace HMI {
             double vel = double.Parse(selectedRow.Cells["dgvJobVel"].Value.ToString());
 
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_MOVE_REL;
             CmdData.axis = cbAxisName.SelectedIndex;
             CmdData.ComPos = pos;
             CmdData.ComVel = vel;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonStop_Click(object sender, EventArgs e) {
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_STOP;
             CmdData.axis = cbAxisName.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonSVON_Click(object sender, EventArgs e) {
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_SVON;
             CmdData.axis = cbAxisName.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonSVOFF_Click(object sender, EventArgs e) {
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_SVOFF;
             CmdData.axis = cbAxisName.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e) {
@@ -490,8 +472,10 @@ namespace HMI {
                     e.Cancel = true;
                     break;
                 default:
+                    CmdMMF.ReadLock(ref CmdData);
                     CmdData.is_closed = true;
-                    CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+                    //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+                    CmdMMF.Write(ref CmdData);
                     break;
             }
         }
@@ -500,15 +484,19 @@ namespace HMI {
         private void timer1_Tick(object sender, EventArgs e) {
             // read the motor axis data first to record all the variable first time
             // (otherwise when write the MotorIOData.axis other value will be not initialized)
-            MotorIOAccessor.Read<MotorIOStruct>(0, out MotorIOData);
-            CmdAccessor.Read<CmdStruct>(0, out CmdData);
+            //MotorIOAccessor.Read<MotorIOStruct>(0, out MotorIOData);
+            //CmdAccessor.Read<CmdStruct>(0, out CmdData);
+            MotorIOMMF.ReadRelease(ref MotorIOData);
+            CmdMMF.ReadRelease(ref CmdData);
 
             // we only use 1 shared memory the store the status of 4 motors/axises (only store the status of 1 motor/axis at a time)
             // this if condition is to change which motor/axis index to store (because tab 1 and tab 2 may request different motor status information)
             // only the status of this axis will be stored in the shared memory
+            MotorIOMMF.ReadLock(ref MotorIOData);
             MotorIOData.InChSelected = cbInput.SelectedIndex;
             MotorIOData.OutChSelected = cbOutput.SelectedIndex;
-            MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
+            //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
+            MotorIOMMF.Write(ref MotorIOData);
 
             // re-initialize axis name without forgeting the last selected combobox index
             GetAxisName();
@@ -690,263 +678,28 @@ namespace HMI {
                 tbACStatus.Text = "Homing";
             }
         }
+        
+        private void cbSetOut_CheckedChanged(object sender, EventArgs e) {
 
-        #region =========== This is for cbSetOut action ===========
-        private void cbSetOut0_CheckedChanged(object sender, EventArgs e) {
             if (selected_RB != 0) return;
 
-            if (cbSetOut0.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 0)) != 0)) {
+            CheckBox selCB = sender as CheckBox;
+            int tagCB = Convert.ToInt32(selCB.Tag);
+
+            if (selCB.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << tagCB)) != 0)) {
                 return;
             }
 
 
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 0;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut0.Checked);
+            CmdData.OutBit = tagCB;
+            CmdData.OutValue = Convert.ToInt32(selCB.Checked);
             CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
-
-        private void cbSetOut1_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut1.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 1)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 1;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut1.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut2_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut2.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 2)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 2;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut2.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut3_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut3.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 3)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 3;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut3.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut4_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut4.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 4)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 4;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut4.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut5_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut5.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 5)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 5;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut5.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut6_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut6.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 6)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 6;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut6.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut7_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut7.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 7)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 7;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut7.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut8_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut8.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 8)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 8;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut8.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut9_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut9.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 9)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 9;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut9.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut10_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut10.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 10)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 10;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut10.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut11_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut11.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 11)) != 0)) {
-                return;
-            }
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 11;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut11.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut12_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut12.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 12)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 12;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut12.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut13_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut13.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 13)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 13;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut13.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut14_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut14.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 14)) != 0)) {
-                return;
-            }
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 14;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut14.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        private void cbSetOut15_CheckedChanged(object sender, EventArgs e) {
-            if (selected_RB != 0) return;
-
-            if (cbSetOut15.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << 15)) != 0)) {
-                return;
-            }
-
-
-            // write new data
-            CmdData.COMMAND = COMMAND_SET_OUTPUT;
-            CmdData.OutBit = 15;
-            CmdData.OutValue = Convert.ToInt32(cbSetOut15.Checked);
-            CmdData.OutCh = cbOutput.SelectedIndex;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
-        }
-
-        #endregion
 
         private static byte ConvertBoolArrayToByte(bool[] source) {
             byte result = 0;
@@ -985,11 +738,13 @@ namespace HMI {
 
             ushort bc = BitConverter.ToUInt16(new byte[2] { (byte)cbOutByte1, (byte)cbOutByte2 }, 0);
 
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_SET_OUTPUT_CH;
             CmdData.OutCh = cbOutput.SelectedIndex;
             int i = cbOutput.SelectedIndex;
             CmdData.OutChValue = bc;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e) {
@@ -1019,16 +774,20 @@ namespace HMI {
             }
 
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_GET_OUTPUT_CH_ARRAY;
             CmdData.OutChArrStart = Int32.Parse(tbChStart.Text.ToString());
             CmdData.OutChArrSize = Int32.Parse(tbChSize.Text.ToString());
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonResetAlrm_Click(object sender, EventArgs e) {
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_ALARM_RESET;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonACStart1_Click(object sender, EventArgs e) {
@@ -1051,6 +810,7 @@ namespace HMI {
                 }
             }
 
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_AC_START1;
             CmdData.PosX1 = double.Parse(tbACPosX1.Text.ToString());
             CmdData.PosX2 = double.Parse(tbACPosX2.Text.ToString());
@@ -1060,7 +820,8 @@ namespace HMI {
             CmdData.PosY3 = double.Parse(tbACPosY3.Text.ToString());
             CmdData.PosZ1 = double.Parse(tbACPosZ1.Text.ToString());
             CmdData.PosZ2 = double.Parse(tbACPosZ2.Text.ToString());
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonACStart2_Click(object sender, EventArgs e) {
@@ -1083,6 +844,7 @@ namespace HMI {
                 }
             }
 
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_AC_START2;
             CmdData.PosX1 = double.Parse(tbACPosX1.Text.ToString());
             CmdData.PosX2 = double.Parse(tbACPosX2.Text.ToString());
@@ -1093,12 +855,15 @@ namespace HMI {
             CmdData.PosY3 = double.Parse(tbACPosY3.Text.ToString());
             CmdData.PosZ1 = double.Parse(tbACPosZ1.Text.ToString());
             CmdData.PosZ2 = double.Parse(tbACPosZ2.Text.ToString());
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonACStop_Click(object sender, EventArgs e) {
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_STOP_AUTO_CYCLE;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void buttonACHome_Click(object sender, EventArgs e) {
@@ -1108,8 +873,10 @@ namespace HMI {
             }
 
             // write new data
+            CmdMMF.ReadLock(ref CmdData);
             CmdData.COMMAND = COMMAND_HOME;
-            CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            //CmdAccessor.Write<CmdStruct>(0, ref CmdData);
+            CmdMMF.Write(ref CmdData);
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {

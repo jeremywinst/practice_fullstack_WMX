@@ -11,6 +11,7 @@
 #include "InputHandler.hpp"
 #include "Module.hpp"
 #include "AutoCycle.hpp"
+#include "MMFHandler.hpp"
 
 #include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
@@ -27,22 +28,33 @@ using namespace std::chrono;
 //----------------------------------------------------------------------------
 
 // initialize shared memory
-HANDLE MotorIOMMF = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, L"MotorIOFileMap");
-MotorIOStruct* MotorIOData = (MotorIOStruct*)MapViewOfFile(MotorIOMMF, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+//HANDLE MotorIOMMF = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, L"MotorIOFileMap");
+//MotorIOStruct* MotorIOData = (MotorIOStruct*)MapViewOfFile(MotorIOMMF, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+//
+//HANDLE CmdMMF = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, L"CmdFileMap");
+//CmdStruct* CmdData = (CmdStruct*)MapViewOfFile(CmdMMF, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
-HANDLE CmdMMF = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, L"CmdFileMap");
-CmdStruct* CmdData = (CmdStruct*)MapViewOfFile(CmdMMF, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-
-// max number of motor and IO
-const int MotorCount = MotorIOData->MotorCount; // determined by HMI init code
-const int InChCount = MotorIOData->InChCount; // determined by HMI init code
-const int OutChCount = MotorIOData->OutChCount; // determined by number of axis in .ini file (the MHI read the .ini file)
+//----------------------------------------------------------------------------
+// Initialize shared memory
+//----------------------------------------------------------------------------
+MMFHandler<MotorIOStruct> MotorIOMMF("MotorIOFileMap", L"MotorIOMut");
+MMFHandler<CmdStruct> CmdMMF("CmdFileMap", L"MotorIOMut");
+MotorIOStruct* MotorIOData = new MotorIOStruct;
+CmdStruct* CmdData = new CmdStruct;
 
 int main() {
 
     // check shared memory size
     //cout << sizeof(MotorIOStruct) << endl;
     //cout << sizeof(CmdStruct) << endl;
+
+    //----------------------------------------------------------------------------
+    // Initialize max number of motor and IO
+    //----------------------------------------------------------------------------
+    MotorIOMMF.ReadRelease(MotorIOData);
+    const int MotorCount = MotorIOData->MotorCount; // determined by HMI init code
+    const int InChCount = MotorIOData->InChCount; // determined by HMI init code
+    const int OutChCount = MotorIOData->OutChCount; // determined by number of axis in .ini file (the MHI read the .ini file)
 
     //----------------------------------------------------------------------------
     // Initialize logger
@@ -95,12 +107,13 @@ int main() {
     MotorHandler* AxisY = Motors[1];
     MotorHandler* AxisZ = Motors[2];
     Module* Mod = new Module(AxisX, AxisY, AxisZ);
-    AutoCycle* Auto = new AutoCycle(Mod, AxisX, AxisY, AxisZ);
+    AutoCycle* Auto = new AutoCycle(Mod, AxisX, AxisY, AxisZ, &CmdMMF);
 
     //----------------------------------------------------------------------------
     // Start monitoring and executing CMD
     //----------------------------------------------------------------------------
     // Loop until the HMI is closed
+    CmdMMF.ReadRelease(CmdData);
     while (!CmdData->is_closed) {
         // debug code here
         /*
@@ -139,7 +152,7 @@ int main() {
         //----------------------------------------------------------------------------
         // get all the motor status and update the shared memory
         wmxlib_cm.GetStatus(&st);
-
+        MotorIOMMF.ReadLock(MotorIOData);
         for (int i = 0; i < 5; i++) {
             switch (i) {
             case 0:
@@ -186,50 +199,67 @@ int main() {
                 break;
             }
         }
+        MotorIOMMF.Write(MotorIOData);
 
         // get I/O and update the shared memory
+        MotorIOMMF.ReadLock(MotorIOData);
         Input.GetInputChannel(MotorIOData->InChSelected, &MotorIOData->DIch);
+        MotorIOMMF.Write(MotorIOData);
+
+        MotorIOMMF.ReadLock(MotorIOData);
         Output.GetOutputChannel(MotorIOData->OutChSelected, &MotorIOData->DOch);
+        MotorIOMMF.Write(MotorIOData);
+        
 
         //----------------------------------------------------------------------------
         // Read command from HMI
         //----------------------------------------------------------------------------
+        CmdMMF.ReadLock(CmdData); 
         if (CmdData->COMMAND == COMMAND_SVON) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Motors[CmdData->axis]->SetServoOn();
         }
         else if (CmdData->COMMAND == COMMAND_SVOFF) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Motors[CmdData->axis]->SetServoOff();
         }
         else if (CmdData->COMMAND == COMMAND_ALARM_RESET) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             for (int i = 0; i < MotorCount; i++) Motors[i]->AlarmReset();
             MainLog->info("Reset Alarm all motor");
         }
         else if (CmdData->COMMAND == COMMAND_MOVE_ABS) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Motors[CmdData->axis]->MoveAbs(ProfileType::Trapezoidal, CmdData->ComVel, 10000, 10000, CmdData->ComPos);
         }
         else if (CmdData->COMMAND == COMMAND_MOVE_REL) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Motors[CmdData->axis]->MoveRel(ProfileType::Trapezoidal, CmdData->ComVel, 10000, 10000, CmdData->ComPos);
         }
         else if (CmdData->COMMAND == COMMAND_STOP) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Motors[CmdData->axis]->Stop();
         }
         else if (CmdData->COMMAND == COMMAND_SET_OUTPUT) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Output.SetOutputBit(CmdData->OutCh, CmdData->OutBit, CmdData->OutValue);
         }
         else if (CmdData->COMMAND == COMMAND_SET_OUTPUT_CH) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             Output.SetOutputChannel(CmdData->OutCh, CmdData->OutChValue);
         }
         // simulation for GetOutputChannelArray
         else if (CmdData->COMMAND == COMMAND_GET_OUTPUT_CH_ARRAY) {
             CmdData->COMMAND = 0;
+            CmdMMF.Write(CmdData);
             WORD *word = new WORD[OutChCount * 2];
             Output.GetOutputChannelArray(CmdData->OutChArrStart, CmdData->OutChArrSize, word);
 
@@ -251,14 +281,21 @@ int main() {
             delete[] word;
         }
         else {
-
+            CmdMMF.Release();
         }
 
         //----------------------------------------------------------------------------
         // AutoCycle section
         //----------------------------------------------------------------------------
+        CmdMMF.ReadLock(CmdData);
+        Auto->ReadCommand(CmdData); // there is write CmdData inside (set cmd = 0)
+        
+        CmdMMF.ReadLock(CmdData);
         CmdData->ACSTAT = Auto->CheckStatus();
-        Auto->ReadCommand(CmdData);
+        CmdMMF.Write(CmdData);
+
+        std::this_thread::sleep_for(1ms); // give the HMI time to acquire the mutex. without this the program become unresponsive
+        CmdMMF.ReadRelease(CmdData);
     };
     
     //----------------------------------------------------------------------------
@@ -269,9 +306,8 @@ int main() {
     wmxlib.StopCommunication();
     wmxlib.CloseDevice();
 
-    //printf("Press any key to exit.\n");
-    //getchar();
+    printf("Press any key to exit.\n");
+    getchar();
 
     return 0;
 }
-
