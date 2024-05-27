@@ -30,8 +30,9 @@ void AutoCycle::ReadCommand(CmdStruct* CmdData) {
     // Read command from HMI
     //----------------------------------------------------------------------------
     if (CmdData->COMMAND == COMMAND_AC_START1 && CmdData->ACSTAT == ACSTAT_READY) {
-        AutoLog->info("EXECUTE FLOOR1");
         CmdData->COMMAND = 0;
+        CmdMMF->Write(CmdData);
+        AutoLog->info("EXECUTE FLOOR1");
         stop_flag = false;
 
         AxisX->Pos[0] = CmdData->PosX1;
@@ -48,9 +49,10 @@ void AutoCycle::ReadCommand(CmdStruct* CmdData) {
         //floor1Thread.detach();
     }
     else if (CmdData->COMMAND == COMMAND_AC_START2 && CmdData->ACSTAT == ACSTAT_READY) {
+        CmdMMF->Write(CmdData);
+        stop_flag = false;
         AutoLog->info("EXECUTE FLOOR2");
         CmdData->COMMAND = 0;
-        stop_flag = false;
 
         AxisX->Pos[0] = CmdData->PosX1;
         AxisX->Pos[1] = CmdData->PosX2;
@@ -66,20 +68,28 @@ void AutoCycle::ReadCommand(CmdStruct* CmdData) {
         //floor2Thread.detach();
     }
     else if (CmdData->COMMAND == COMMAND_HOME) {
-        AutoLog->info("EXECUTE HOME");
         CmdData->COMMAND = 0;
+        CmdMMF->Write(CmdData);
+        AutoLog->info("EXECUTE HOME");
         homing = true;
         afterStop = false;
         Mod->GoHome();
     }
     else if (CmdData->COMMAND == COMMAND_STOP_AUTO_CYCLE) {
-        AutoLog->info("EXECUTE STOP");
         CmdData->COMMAND = 0;
+        CmdMMF->Write(CmdData);
+        AutoLog->info("EXECUTE STOP");
         stop_flag = true;
         afterStop = true;
         //Mod->StopAll(); // enable this for immediate stop
     }
     else {
-        
+        CmdMMF->Release();
     }
 }
+
+//void AutoCycle::ResetCmd(CmdStruct* CmdData) {
+//    CmdMMF->ReadLock(CmdData);
+//    CmdData->COMMAND = 0;
+//    CmdMMF->Write(CmdData);
+//}

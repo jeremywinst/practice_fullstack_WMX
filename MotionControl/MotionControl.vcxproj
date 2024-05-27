@@ -147,10 +147,12 @@
     <ClInclude Include="AutoCycle.hpp" />
     <ClInclude Include="easylogging++.h" />
     <ClInclude Include="InputHandler.hpp" />
+    <ClInclude Include="MMFHandler.hpp" />
     <ClInclude Include="Module.hpp" />
     <ClInclude Include="MotorHandler.hpp" />
     <ClInclude Include="OutputHandler.hpp" />
     <ClInclude Include="DataTypes.hpp" />
+    <ClInclude Include="SharedData.hpp" />
     <ClInclude Include="WMXMotorIO.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
