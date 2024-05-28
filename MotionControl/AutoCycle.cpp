@@ -49,10 +49,10 @@ void AutoCycle::ReadCommand(CmdStruct* CmdData) {
         //floor1Thread.detach();
     }
     else if (CmdData->COMMAND == COMMAND_AC_START2 && CmdData->ACSTAT == ACSTAT_READY) {
-        CmdMMF->Write(CmdData);
-        stop_flag = false;
-        AutoLog->info("EXECUTE FLOOR2");
         CmdData->COMMAND = 0;
+        CmdMMF->Write(CmdData);
+        AutoLog->info("EXECUTE FLOOR2");
+        stop_flag = false;
 
         AxisX->Pos[0] = CmdData->PosX1;
         AxisX->Pos[1] = CmdData->PosX2;

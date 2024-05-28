@@ -37,11 +37,9 @@ void Module::Floor1(std::atomic<bool>& stop_flag) {
 		AxisY->MoveAbs(ProfileType::Trapezoidal, 10000, 10000, 10000, Path[i][1]);
 		AxisZ->MoveAbs(ProfileType::Trapezoidal, 10000, 10000, 10000, Path[i][2]);
 		while (!AxisX->InPos() || !AxisY->InPos() || !AxisZ->InPos());
-		if (stop_flag) goto exit;
+		if (stop_flag) break;
 	}
-	goto exit;
 
-exit:
 	ModLog->info("FLOOR1 FINISH");
 	stop_flag = true;
 	return;
@@ -67,11 +65,9 @@ void Module::Floor2(std::atomic<bool>& stop_flag) {
 		AxisY->MoveAbs(ProfileType::Trapezoidal, 10000, 10000, 10000, Path[i][1]);
 		AxisZ->MoveAbs(ProfileType::Trapezoidal, 10000, 10000, 10000, Path[i][2]);
 		while (!AxisX->InPos() || !AxisY->InPos() || !AxisZ->InPos());
-		if (stop_flag) goto exit;
+		if (stop_flag) break;
 	}
-	goto exit;
 
-exit:
 	ModLog->info("FLOOR2 FINISH");
 	stop_flag = true;
 	return;
@@ -155,11 +151,8 @@ void Module::Floor1_3DIntp(std::atomic<bool>& stop_flag) {
 
 	// still fail immediately go to exit
 	advMotion->StartPathIntpl3DPos(&path);
-	while (!AxisX->InPos() && !AxisY->InPos() && !AxisZ->InPos()) if (stop_flag) goto exit;
+	while (!AxisX->InPos() && !AxisY->InPos() && !AxisZ->InPos()) if (stop_flag) break;
 
-	goto exit;
-
-exit:
 	ModLog->info("FLOOR1(ADV) FINISH");
 	stop_flag = true;
 	return;
@@ -231,11 +224,8 @@ void Module::Floor2_3DIntp(std::atomic<bool>& stop_flag) {
 	advMotion->StartPathIntpl3DPos(&path);
 	
 	// still fail immediately go to exit
-	while (!AxisX->InPos() && !AxisY->InPos() && !AxisZ->InPos()) if (stop_flag) goto exit;
+	while (!AxisX->InPos() && !AxisY->InPos() && !AxisZ->InPos()) if (stop_flag) break;
 	
-	goto exit;
-
-exit:
 	ModLog->info("FLOOR2(ADV) FINISH");
 	stop_flag = true;
 	return;
