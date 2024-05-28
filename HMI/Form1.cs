@@ -21,7 +21,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 namespace HMI {
     public partial class Form1 : Form {
         // make axis_data global since its used by a lot of function
-        static string axis_ini_path = "..\\..\\..\\..\\AxisName.ini";
+        static string axis_ini_path = "..\\..\\..\\..\\settings\\AxisName.ini";
         static FileIniDataParser parser = new FileIniDataParser();
         IniData axis_data = parser.ReadFile(axis_ini_path);
 

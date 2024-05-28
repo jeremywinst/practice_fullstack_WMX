@@ -59,17 +59,10 @@ int main() {
     //----------------------------------------------------------------------------
     // Initialize logger
     //----------------------------------------------------------------------------
-    el::Logger *MainLog = el::Loggers::getLogger("Main");
-
-    char cCurrentPath[FILENAME_MAX];
-    _getcwd(cCurrentPath, sizeof(cCurrentPath));
-    char cConfName[] = "\\log_config.conf";
-
-    char combPath[FILENAME_MAX];
-    strcpy_s(combPath, _countof(combPath), cCurrentPath);
-    strcat_s(combPath, _countof(combPath), cConfName);
-
-    el::Configurations conf(combPath);
+    string log_conf_path = "..\\..\\..\\..\\settings\\log_config.conf";
+    el::Configurations conf(log_conf_path);
+    
+    el::Logger* MainLog = el::Loggers::getLogger("Main");
     el::Loggers::reconfigureAllLoggers(conf);
 
     //----------------------------------------------------------------------------
@@ -107,6 +100,9 @@ int main() {
     MotorHandler* AxisZ = Motors[2];
     Module* Mod = new Module(AxisX, AxisY, AxisZ);
     AutoCycle* Auto = new AutoCycle(Mod, AxisX, AxisY, AxisZ, &CmdMMF);
+
+    // reconfigure logger for motor, DIO, module, and autocycle
+    el::Loggers::reconfigureAllLoggers(conf);
 
     //----------------------------------------------------------------------------
     // Start monitoring and executing CMD
