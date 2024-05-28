@@ -163,14 +163,16 @@ int main() {
         MotorIOMMF.Write(MotorIOData);
 
         // get I/O and update the shared memory
-        MotorIOMMF.ReadLock(MotorIOData);
-        Input.GetInputChannel(MotorIOData->InChSelected, &MotorIOData->DIch);
-        MotorIOMMF.Write(MotorIOData);
+        for (int i = 0; i < 10; i++) {
+            MotorIOMMF.ReadLock(MotorIOData);
+            Input.GetInputChannel(i, &MotorIOData->DIch[i]);
+            MotorIOMMF.Write(MotorIOData);
 
-        MotorIOMMF.ReadLock(MotorIOData);
-        Output.GetOutputChannel(MotorIOData->OutChSelected, &MotorIOData->DOch);
-        MotorIOMMF.Write(MotorIOData);
-        
+            MotorIOMMF.ReadLock(MotorIOData);
+            Output.GetOutputChannel(i, &MotorIOData->DOch[i]);
+            MotorIOMMF.Write(MotorIOData);
+        }
+
         //----------------------------------------------------------------------------
         // Read command from HMI
         //----------------------------------------------------------------------------

@@ -27,7 +27,10 @@ namespace HMI {
         public int DIO_channel;
         public int MotorCount, InChCount, OutChCount;
         public int InChSelected, OutChSelected;
-        public ushort DIch, DOch;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public ushort[] DIch;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public ushort[] DOch;
         //public byte DI0, DI1, DI2, DI3;
         //public byte DO0, DO1, DO2, DO3;
     }

@@ -192,7 +192,7 @@ namespace HMI {
         }
 
         private void OutputCB_Init() {
-            for (int i = 0; i < 16; i++) cbSetOut_collecttion[i].Checked = (MotorIOData.DOch & (1 << i)) != 0;
+            for (int i = 0; i < 16; i++) cbSetOut_collecttion[i].Checked = (MotorIOData.DOch[cbOutput.SelectedIndex] & (1 << i)) != 0;
         }
 
         // re-initialize axis name without forgeting the last selected combobox index
@@ -301,19 +301,12 @@ namespace HMI {
 
         }
 
+        // update checkbox when cbOutput cbOutput_SelectedIndexChanged
         private void cbOutput_SelectedIndexChanged(object sender, EventArgs e) {
-            //Debug.WriteLine(cbOutput.SelectedIndex);
-            MotorIOMMF.ReadLock(ref MotorIOData);
-            MotorIOData.OutChSelected = cbOutput.SelectedIndex;
-            //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
-            MotorIOMMF.Write(ref MotorIOData);
-            // let the C++ update the DIO data (w/o this the program become unresponsive)
-            Thread.Sleep(10); 
-            // then update the output combo cox
-            MotorIOMMF.ReadRelease(ref MotorIOData);
-            for (int i = 0; i < 16; i++) cbSetOut_collecttion[i].Checked = (MotorIOData.DOch & (1 << i)) != 0;
+            for (int i = 0; i < 16; i++) cbSetOut_collecttion[i].Checked = (MotorIOData.DOch[cbOutput.SelectedIndex] & (1 << i)) != 0;
         }
 
+        // change axis name when cbAxisName_SelectedIndexChanged (tab 3)
         private void cbAxisName_SelectedIndexChanged(object sender, EventArgs e) {
             labelAxisName.Text = $"Axis Name: {axis_data["axis"][cbAxisName.SelectedItem.ToString()]}";
         }
@@ -490,19 +483,21 @@ namespace HMI {
             //MotorIOAccessor.Read<MotorIOStruct>(0, out MotorIOData);
             //CmdAccessor.Read<CmdStruct>(0, out CmdData);
             //MotorIOMMF.ReadRelease(ref MotorIOData);
-            CmdMMF.ReadRelease(ref CmdData);
 
             // we only use 1 shared memory the store the status of 4 motors/axises (only store the status of 1 motor/axis at a time)
             // this if condition is to change which motor/axis index to store (because tab 1 and tab 2 may request different motor status information)
             // only the status of this axis will be stored in the shared memory
-            MotorIOMMF.ReadLock(ref MotorIOData);
-            MotorIOData.InChSelected = cbInput.SelectedIndex;
+            //MotorIOMMF.ReadLock(ref MotorIOData);
+            //MotorIOData.InChSelected = cbInput.SelectedIndex;
             //MotorIOData.OutChSelected = cbOutput.SelectedIndex; // maybe the output no need to do this because the source is from HMI so no need to update everytime
             //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
-            MotorIOMMF.Write(ref MotorIOData);
+            //MotorIOMMF.Write(ref MotorIOData);
 
             // re-initialize axis name without forgeting the last selected combobox index
             GetAxisName();
+
+            // read motor and IO data
+            MotorIOMMF.ReadRelease(ref MotorIOData);
 
             //----------------------------------------------------------------------------
             // Read the motor/axis data
@@ -549,15 +544,16 @@ namespace HMI {
             // Read the I/O data
             //----------------------------------------------------------------------------
             // Input
-            for (int i = 0; i != 16; i++) dgvInput.Rows[i].Cells[1].Value = ((MotorIOData.DIch & (1 << i)) != 0) ? 1 : 0;
+            for (int i = 0; i != 16; i++) dgvInput.Rows[i].Cells[1].Value = ((MotorIOData.DIch[cbInput.SelectedIndex] & (1 << i)) != 0) ? 1 : 0;
             // Output
-            for (int i = 0; i != 16; i++) dgvOutput.Rows[i].Cells[1].Value = ((MotorIOData.DOch & (1 << i)) != 0) ? 1 : 0;
+            for (int i = 0; i != 16; i++) dgvOutput.Rows[i].Cells[1].Value = ((MotorIOData.DOch[cbOutput.SelectedIndex] & (1 << i)) != 0) ? 1 : 0;
 
             //Debug.WriteLine(CmdData.ACSTAT);
 
             //----------------------------------------------------------------------------
             // Read the Auto Cycle data
             //----------------------------------------------------------------------------
+            CmdMMF.ReadRelease(ref CmdData);
             if (CmdData.ACSTAT == ACSTAT_READY) {
                 tbACStatus.Text = "Ready";
             }
@@ -582,10 +578,9 @@ namespace HMI {
             CheckBox selCB = sender as CheckBox;
             int tagCB = Convert.ToInt32(selCB.Tag);
 
-            if (selCB.Checked == Convert.ToBoolean((MotorIOData.DOch & (1 << tagCB)) != 0)) {
+            if (selCB.Checked == Convert.ToBoolean((MotorIOData.DOch[cbOutput.SelectedIndex] & (1 << tagCB)) != 0)) {
                 return;
             }
-
 
             // write new data
             CmdMMF.ReadLock(ref CmdData);

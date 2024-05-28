@@ -13,7 +13,8 @@ typedef struct MotorIOStruct {
     int DIO_channel;
     int MotorCount, InChCount, OutChCount;
     int InChSelected, OutChSelected;
-    WORD DIch, DOch;
+    WORD DIch[10];
+    WORD DOch[10];
     //unsigned char DI0, DI1, DI2, DI3;
     //unsigned char DO0, DO1, DO2, DO3;
 };
