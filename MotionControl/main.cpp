@@ -163,11 +163,13 @@ int main() {
         MotorIOMMF.Write(MotorIOData);
 
         // get I/O and update the shared memory
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < sizeof(MotorIOData->DIch); i++) {
             MotorIOMMF.ReadLock(MotorIOData);
             Input.GetInputChannel(i, &MotorIOData->DIch[i]);
             MotorIOMMF.Write(MotorIOData);
+        }
 
+        for (int i = 0; i < sizeof(MotorIOData->DOch); i++) {
             MotorIOMMF.ReadLock(MotorIOData);
             Output.GetOutputChannel(i, &MotorIOData->DOch[i]);
             MotorIOMMF.Write(MotorIOData);
