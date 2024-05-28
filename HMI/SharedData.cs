@@ -22,15 +22,15 @@ namespace HMI {
     [StructLayout(LayoutKind.Sequential, Pack = 1)] // Ensure fields are laid out in memory sequentially
                                                     // initialize struct for memory mapped file
     public struct MotorIOStruct {
-        public MotorData Motor0;
-        public MotorData Motor1;
-        public MotorData Motor2;
-        public MotorData Motor3;
-        public MotorData Motor4;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public MotorData[] Motor;
         public int DIO_channel;
         public int MotorCount, InChCount, OutChCount;
         public int InChSelected, OutChSelected;
-        public ushort DIch, DOch;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public ushort[] DIch;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public ushort[] DOch;
         //public byte DI0, DI1, DI2, DI3;
         //public byte DO0, DO1, DO2, DO3;
     }

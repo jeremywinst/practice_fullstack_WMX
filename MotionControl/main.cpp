@@ -59,7 +59,6 @@ int main() {
     //----------------------------------------------------------------------------
     // Initialize logger
     //----------------------------------------------------------------------------
-    
     el::Logger *MainLog = el::Loggers::getLogger("Main");
 
     char cCurrentPath[FILENAME_MAX];
@@ -154,62 +153,27 @@ int main() {
         wmxlib_cm.GetStatus(&st);
         MotorIOMMF.ReadLock(MotorIOData);
         for (int i = 0; i < 5; i++) {
-            switch (i) {
-            case 0:
-                MotorIOData->Motor0.SVON = st.axesStatus[i].servoOn;
-                MotorIOData->Motor0.pos = st.axesStatus[i].actualPos;
-                MotorIOData->Motor0.vel = st.axesStatus[i].actualVelocity;
-                MotorIOData->Motor0.alarm = st.axesStatus[i].ampAlarmCode;
-                MotorIOData->Motor0.limit_max = st.axesStatus[i].positiveSoftLimit;
-                MotorIOData->Motor0.limit_min = st.axesStatus[i].negativeSoftLimit;
-                break;
-            case 1:
-                MotorIOData->Motor1.SVON = st.axesStatus[i].servoOn;
-                MotorIOData->Motor1.pos = st.axesStatus[i].actualPos;
-                MotorIOData->Motor1.vel = st.axesStatus[i].actualVelocity;
-                MotorIOData->Motor1.alarm = st.axesStatus[i].ampAlarmCode;
-                MotorIOData->Motor1.limit_max = st.axesStatus[i].positiveSoftLimit;
-                MotorIOData->Motor1.limit_min = st.axesStatus[i].negativeSoftLimit;
-                break;
-            case 2:
-                MotorIOData->Motor2.SVON = st.axesStatus[i].servoOn;
-                MotorIOData->Motor2.pos = st.axesStatus[i].actualPos;
-                MotorIOData->Motor2.vel = st.axesStatus[i].actualVelocity;
-                MotorIOData->Motor2.alarm = st.axesStatus[i].ampAlarmCode;
-                MotorIOData->Motor2.limit_max = st.axesStatus[i].positiveSoftLimit;
-                MotorIOData->Motor2.limit_min = st.axesStatus[i].negativeSoftLimit;
-                break;
-            case 3:
-                MotorIOData->Motor3.SVON = st.axesStatus[i].servoOn;
-                MotorIOData->Motor3.pos = st.axesStatus[i].actualPos;
-                MotorIOData->Motor3.vel = st.axesStatus[i].actualVelocity;
-                MotorIOData->Motor3.alarm = st.axesStatus[i].ampAlarmCode;
-                MotorIOData->Motor3.limit_max = st.axesStatus[i].positiveSoftLimit;
-                MotorIOData->Motor3.limit_min = st.axesStatus[i].negativeSoftLimit;
-                break;
-            case 4:
-                MotorIOData->Motor4.SVON = st.axesStatus[4].servoOn;
-                MotorIOData->Motor4.pos = st.axesStatus[4].actualPos;
-                MotorIOData->Motor4.vel = st.axesStatus[4].actualVelocity;
-                MotorIOData->Motor4.alarm = st.axesStatus[4].ampAlarmCode;
-                MotorIOData->Motor4.limit_max = st.axesStatus[4].positiveSoftLimit;
-                MotorIOData->Motor4.limit_min = st.axesStatus[4].negativeSoftLimit;
-                break;
-            default:
-                break;
-            }
+            MotorIOData->Motor[i].SVON = st.axesStatus[i].servoOn;
+            MotorIOData->Motor[i].pos = st.axesStatus[i].actualPos;
+            MotorIOData->Motor[i].vel = st.axesStatus[i].actualVelocity;
+            MotorIOData->Motor[i].alarm = st.axesStatus[i].ampAlarmCode;
+            MotorIOData->Motor[i].limit_max = st.axesStatus[i].positiveSoftLimit;
+            MotorIOData->Motor[i].limit_min = st.axesStatus[i].negativeSoftLimit;
         }
         MotorIOMMF.Write(MotorIOData);
 
         // get I/O and update the shared memory
-        MotorIOMMF.ReadLock(MotorIOData);
-        Input.GetInputChannel(MotorIOData->InChSelected, &MotorIOData->DIch);
-        MotorIOMMF.Write(MotorIOData);
+        for (int i = 0; i < sizeof(MotorIOData->DIch); i++) {
+            MotorIOMMF.ReadLock(MotorIOData);
+            Input.GetInputChannel(i, &MotorIOData->DIch[i]);
+            MotorIOMMF.Write(MotorIOData);
+        }
 
-        MotorIOMMF.ReadLock(MotorIOData);
-        Output.GetOutputChannel(MotorIOData->OutChSelected, &MotorIOData->DOch);
-        MotorIOMMF.Write(MotorIOData);
-        
+        for (int i = 0; i < sizeof(MotorIOData->DOch); i++) {
+            MotorIOMMF.ReadLock(MotorIOData);
+            Output.GetOutputChannel(i, &MotorIOData->DOch[i]);
+            MotorIOMMF.Write(MotorIOData);
+        }
 
         //----------------------------------------------------------------------------
         // Read command from HMI
@@ -293,6 +257,8 @@ int main() {
         CmdMMF.ReadLock(CmdData);
         CmdData->ACSTAT = Auto->CheckStatus();
         CmdMMF.Write(CmdData);
+
+
 
         std::this_thread::sleep_for(1ms); // give the HMI time to acquire the mutex. without this the program become unresponsive
         CmdMMF.ReadRelease(CmdData);

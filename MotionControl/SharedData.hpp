@@ -9,15 +9,12 @@ typedef struct MotDataStruct {
 };
 
 typedef struct MotorIOStruct {
-    struct MotDataStruct Motor0;
-    struct MotDataStruct Motor1;
-    struct MotDataStruct Motor2;
-    struct MotDataStruct Motor3;
-    struct MotDataStruct Motor4;
+    struct MotDataStruct Motor[5];
     int DIO_channel;
     int MotorCount, InChCount, OutChCount;
     int InChSelected, OutChSelected;
-    WORD DIch, DOch;
+    WORD DIch[10];
+    WORD DOch[10];
     //unsigned char DI0, DI1, DI2, DI3;
     //unsigned char DO0, DO1, DO2, DO3;
 };
