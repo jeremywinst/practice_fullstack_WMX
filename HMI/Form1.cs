@@ -21,7 +21,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 namespace HMI {
     public partial class Form1 : Form {
         // make axis_data global since its used by a lot of function
-        static string axis_ini_path = "axis.ini";
+        static string axis_ini_path = "..\\..\\..\\..\\AxisName.ini";
         static FileIniDataParser parser = new FileIniDataParser();
         IniData axis_data = parser.ReadFile(axis_ini_path);
 
@@ -105,7 +105,7 @@ namespace HMI {
             CmdMMF = new MMFHandler<CmdStruct>("CmdFileMap", "CmdMut");
 
             // calculate how many axis we have and initialize motor ComboBox tab 2 and 3 from axis.ini
-            foreach (var axis_name in axis_data["axis"]) {
+            foreach (var axis_name in axis_data["AxisName"]) {
                 cbAxisName.Items.Add(axis_name.KeyName);
                 cbMotorStat.Items.Add(axis_name.Value);
                 MaxMotorCount++;
@@ -147,7 +147,7 @@ namespace HMI {
             cbOutput.SelectedIndex = 0;
             cbMotorStat.SelectedIndex = 0;
             cbAxisName.SelectedIndex = 0;
-            labelAxisName.Text = $"Axis Name: {axis_data["axis"][cbAxisName.SelectedItem.ToString()]}";
+            labelAxisName.Text = $"Axis Name: {axis_data["AxisName"][cbAxisName.SelectedItem.ToString()]}";
 
             // initialize GridDataView
             IODgv_Init();
@@ -208,11 +208,11 @@ namespace HMI {
             cbAxisName.Items.Clear();
             cbMotorStat.Items.Clear();
 
-            foreach (var axis_name in axis_data["axis"]) {
+            foreach (var axis_name in axis_data["AxisName"]) {
                 cbAxisName.Items.Add(axis_name.KeyName);
                 cbMotorStat.Items.Add(axis_name.Value);
             }
-            labelAxisName.Text = $"Axis Name: {axis_data["axis"][prev_axis.ToString()]}";
+            labelAxisName.Text = $"Axis Name: {axis_data["AxisName"][prev_axis.ToString()]}";
 
             // set the previous selected ComboBox index
             cbAxisName.SelectedIndex = prev_axis;
@@ -308,7 +308,7 @@ namespace HMI {
 
         // change axis name when cbAxisName_SelectedIndexChanged (tab 3)
         private void cbAxisName_SelectedIndexChanged(object sender, EventArgs e) {
-            labelAxisName.Text = $"Axis Name: {axis_data["axis"][cbAxisName.SelectedItem.ToString()]}";
+            labelAxisName.Text = $"Axis Name: {axis_data["AxisName"][cbAxisName.SelectedItem.ToString()]}";
         }
 
         // set output value when the DataGridView is edited. auto get the index of edited cell.
