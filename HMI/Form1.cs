@@ -86,7 +86,7 @@ namespace HMI {
             //    Debug.WriteLine($"{field.Name}: {size} bytes");
             //}
 
-            // check shared memory size
+            ////check shared memory size
             //Debug.WriteLine(Marshal.SizeOf(MotorIOData));
             //Debug.WriteLine(Marshal.SizeOf(typeof(CmdStruct)));
 
@@ -307,7 +307,7 @@ namespace HMI {
             MotorIOData.OutChSelected = cbOutput.SelectedIndex;
             //MotorIOAccessor.Write<MotorIOStruct>(0, ref MotorIOData);
             MotorIOMMF.Write(ref MotorIOData);
-            // let the C++ update the DIO data
+            // let the C++ update the DIO data (w/o this the program become unresponsive)
             Thread.Sleep(10); 
             // then update the output combo cox
             MotorIOMMF.ReadRelease(ref MotorIOData);
@@ -507,120 +507,43 @@ namespace HMI {
             //----------------------------------------------------------------------------
             // Read the motor/axis data
             //----------------------------------------------------------------------------
-
             // update motor status tab 2
-            switch (cbMotorStat.SelectedIndex) {
-                case 0:
-                    dgvMotorStat.Rows[0].Cells[1].Value = MotorIOData.Motor0.SVON;
-                    dgvMotorStat.Rows[1].Cells[1].Value = MotorIOData.Motor0.alarm;
-                    dgvMotorStat.Rows[2].Cells[1].Value = MotorIOData.Motor0.pos;
-                    dgvMotorStat.Rows[3].Cells[1].Value = MotorIOData.Motor0.vel;
-                    dgvMotorStat.Rows[4].Cells[1].Value = MotorIOData.Motor0.limit_max;
-                    dgvMotorStat.Rows[5].Cells[1].Value = MotorIOData.Motor0.limit_min;
-                    break;
-                case 1:
-                    dgvMotorStat.Rows[0].Cells[1].Value = MotorIOData.Motor1.SVON;
-                    dgvMotorStat.Rows[1].Cells[1].Value = MotorIOData.Motor1.alarm;
-                    dgvMotorStat.Rows[2].Cells[1].Value = MotorIOData.Motor1.pos;
-                    dgvMotorStat.Rows[3].Cells[1].Value = MotorIOData.Motor1.vel;
-                    dgvMotorStat.Rows[4].Cells[1].Value = MotorIOData.Motor1.limit_max;
-                    dgvMotorStat.Rows[5].Cells[1].Value = MotorIOData.Motor1.limit_min;
-                    break;
-                case 2:
-                    dgvMotorStat.Rows[0].Cells[1].Value = MotorIOData.Motor2.SVON;
-                    dgvMotorStat.Rows[1].Cells[1].Value = MotorIOData.Motor2.alarm;
-                    dgvMotorStat.Rows[2].Cells[1].Value = MotorIOData.Motor2.pos;
-                    dgvMotorStat.Rows[3].Cells[1].Value = MotorIOData.Motor2.vel;
-                    dgvMotorStat.Rows[4].Cells[1].Value = MotorIOData.Motor2.limit_max;
-                    dgvMotorStat.Rows[5].Cells[1].Value = MotorIOData.Motor2.limit_min;
-                    break;
-                case 3:
-                    dgvMotorStat.Rows[0].Cells[1].Value = MotorIOData.Motor3.SVON;
-                    dgvMotorStat.Rows[1].Cells[1].Value = MotorIOData.Motor3.alarm;
-                    dgvMotorStat.Rows[2].Cells[1].Value = MotorIOData.Motor3.pos;
-                    dgvMotorStat.Rows[3].Cells[1].Value = MotorIOData.Motor3.vel;
-                    dgvMotorStat.Rows[4].Cells[1].Value = MotorIOData.Motor3.limit_max;
-                    dgvMotorStat.Rows[5].Cells[1].Value = MotorIOData.Motor3.limit_min;
-                    break;
-                case 4:
-                    dgvMotorStat.Rows[0].Cells[1].Value = MotorIOData.Motor4.SVON;
-                    dgvMotorStat.Rows[1].Cells[1].Value = MotorIOData.Motor4.alarm;
-                    dgvMotorStat.Rows[2].Cells[1].Value = MotorIOData.Motor4.pos;
-                    dgvMotorStat.Rows[3].Cells[1].Value = MotorIOData.Motor4.vel;
-                    dgvMotorStat.Rows[4].Cells[1].Value = MotorIOData.Motor4.limit_max;
-                    dgvMotorStat.Rows[5].Cells[1].Value = MotorIOData.Motor4.limit_min;
-                    break;
-                default:
-                    break;
-            }
+            dgvMotorStat.Rows[0].Cells[1].Value = MotorIOData.Motor[cbMotorStat.SelectedIndex].SVON;
+            dgvMotorStat.Rows[1].Cells[1].Value = MotorIOData.Motor[cbMotorStat.SelectedIndex].alarm;
+            dgvMotorStat.Rows[2].Cells[1].Value = MotorIOData.Motor[cbMotorStat.SelectedIndex].pos;
+            dgvMotorStat.Rows[3].Cells[1].Value = MotorIOData.Motor[cbMotorStat.SelectedIndex].vel;
+            dgvMotorStat.Rows[4].Cells[1].Value = MotorIOData.Motor[cbMotorStat.SelectedIndex].limit_max;
+            dgvMotorStat.Rows[5].Cells[1].Value = MotorIOData.Motor[cbMotorStat.SelectedIndex].limit_min;
 
             // update motor status tab 3
-            switch (cbAxisName.SelectedIndex) {
-                case 0:
-                    tbSVON.Text = MotorIOData.Motor0.SVON.ToString();
-                    tbAlarm.Text = MotorIOData.Motor0.alarm.ToString();
-                    tbPos.Text = MotorIOData.Motor0.pos.ToString();
-                    tbVel.Text = MotorIOData.Motor0.vel.ToString();
-                    tbLim1.Text = MotorIOData.Motor0.limit_max.ToString();
-                    tbLim2.Text = MotorIOData.Motor0.limit_min.ToString();
-                    break;
-                case 1:
-                    tbSVON.Text = MotorIOData.Motor1.SVON.ToString();
-                    tbAlarm.Text = MotorIOData.Motor1.alarm.ToString();
-                    tbPos.Text = MotorIOData.Motor1.pos.ToString();
-                    tbVel.Text = MotorIOData.Motor1.vel.ToString();
-                    tbLim1.Text = MotorIOData.Motor1.limit_max.ToString();
-                    tbLim2.Text = MotorIOData.Motor1.limit_min.ToString();
-                    break;
-                case 2:
-                    tbSVON.Text = MotorIOData.Motor2.SVON.ToString();
-                    tbAlarm.Text = MotorIOData.Motor3.alarm.ToString();
-                    tbPos.Text = MotorIOData.Motor2.pos.ToString();
-                    tbVel.Text = MotorIOData.Motor2.vel.ToString();
-                    tbLim1.Text = MotorIOData.Motor2.limit_max.ToString();
-                    tbLim2.Text = MotorIOData.Motor2.limit_min.ToString();
-                    break;
-                case 3:
-                    tbSVON.Text = MotorIOData.Motor3.SVON.ToString();
-                    tbAlarm.Text = MotorIOData.Motor3.alarm.ToString();
-                    tbPos.Text = MotorIOData.Motor3.pos.ToString();
-                    tbVel.Text = MotorIOData.Motor3.vel.ToString();
-                    tbLim1.Text = MotorIOData.Motor3.limit_max.ToString();
-                    tbLim2.Text = MotorIOData.Motor3.limit_min.ToString();
-                    break;
-                case 4:
-                    tbSVON.Text = MotorIOData.Motor4.SVON.ToString();
-                    tbAlarm.Text = MotorIOData.Motor4.alarm.ToString();
-                    tbPos.Text = MotorIOData.Motor4.pos.ToString();
-                    tbVel.Text = MotorIOData.Motor4.vel.ToString();
-                    tbLim1.Text = MotorIOData.Motor4.limit_max.ToString();
-                    tbLim2.Text = MotorIOData.Motor4.limit_min.ToString();
-                    break;
-                default:
-                    break;
-            }
+            tbSVON.Text = MotorIOData.Motor[cbAxisName.SelectedIndex].SVON.ToString();
+            tbAlarm.Text = MotorIOData.Motor[cbAxisName.SelectedIndex].alarm.ToString();
+            tbPos.Text = MotorIOData.Motor[cbAxisName.SelectedIndex].pos.ToString();
+            tbVel.Text = MotorIOData.Motor[cbAxisName.SelectedIndex].vel.ToString();
+            tbLim1.Text = MotorIOData.Motor[cbAxisName.SelectedIndex].limit_max.ToString();
+            tbLim2.Text = MotorIOData.Motor[cbAxisName.SelectedIndex].limit_min.ToString();
 
             // update motor status tab 4
-            dgvACXStatus.Rows[0].Cells[1].Value = MotorIOData.Motor0.SVON;
-            dgvACXStatus.Rows[1].Cells[1].Value = MotorIOData.Motor0.alarm;
-            dgvACXStatus.Rows[2].Cells[1].Value = MotorIOData.Motor0.pos;
-            dgvACXStatus.Rows[3].Cells[1].Value = MotorIOData.Motor0.vel;
-            dgvACXStatus.Rows[4].Cells[1].Value = MotorIOData.Motor0.limit_max;
-            dgvACXStatus.Rows[5].Cells[1].Value = MotorIOData.Motor0.limit_min;
+            dgvACXStatus.Rows[0].Cells[1].Value = MotorIOData.Motor[0].SVON;
+            dgvACXStatus.Rows[1].Cells[1].Value = MotorIOData.Motor[0].alarm;
+            dgvACXStatus.Rows[2].Cells[1].Value = MotorIOData.Motor[0].pos;
+            dgvACXStatus.Rows[3].Cells[1].Value = MotorIOData.Motor[0].vel;
+            dgvACXStatus.Rows[4].Cells[1].Value = MotorIOData.Motor[0].limit_max;
+            dgvACXStatus.Rows[5].Cells[1].Value = MotorIOData.Motor[0].limit_min;
 
-            dgvACYStatus.Rows[0].Cells[1].Value = MotorIOData.Motor1.SVON;
-            dgvACYStatus.Rows[1].Cells[1].Value = MotorIOData.Motor1.alarm;
-            dgvACYStatus.Rows[2].Cells[1].Value = MotorIOData.Motor1.pos;
-            dgvACYStatus.Rows[3].Cells[1].Value = MotorIOData.Motor1.vel;
-            dgvACYStatus.Rows[4].Cells[1].Value = MotorIOData.Motor1.limit_max;
-            dgvACYStatus.Rows[5].Cells[1].Value = MotorIOData.Motor1.limit_min;
+            dgvACYStatus.Rows[0].Cells[1].Value = MotorIOData.Motor[1].SVON;
+            dgvACYStatus.Rows[1].Cells[1].Value = MotorIOData.Motor[1].alarm;
+            dgvACYStatus.Rows[2].Cells[1].Value = MotorIOData.Motor[1].pos;
+            dgvACYStatus.Rows[3].Cells[1].Value = MotorIOData.Motor[1].vel;
+            dgvACYStatus.Rows[4].Cells[1].Value = MotorIOData.Motor[1].limit_max;
+            dgvACYStatus.Rows[5].Cells[1].Value = MotorIOData.Motor[1].limit_min;
 
-            dgvACZStatus.Rows[0].Cells[1].Value = MotorIOData.Motor2.SVON;
-            dgvACZStatus.Rows[1].Cells[1].Value = MotorIOData.Motor2.alarm;
-            dgvACZStatus.Rows[2].Cells[1].Value = MotorIOData.Motor2.pos;
-            dgvACZStatus.Rows[3].Cells[1].Value = MotorIOData.Motor2.vel;
-            dgvACZStatus.Rows[4].Cells[1].Value = MotorIOData.Motor2.limit_max;
-            dgvACZStatus.Rows[5].Cells[1].Value = MotorIOData.Motor2.limit_min;
+            dgvACZStatus.Rows[0].Cells[1].Value = MotorIOData.Motor[2].SVON;
+            dgvACZStatus.Rows[1].Cells[1].Value = MotorIOData.Motor[2].alarm;
+            dgvACZStatus.Rows[2].Cells[1].Value = MotorIOData.Motor[2].pos;
+            dgvACZStatus.Rows[3].Cells[1].Value = MotorIOData.Motor[2].vel;
+            dgvACZStatus.Rows[4].Cells[1].Value = MotorIOData.Motor[2].limit_max;
+            dgvACZStatus.Rows[5].Cells[1].Value = MotorIOData.Motor[2].limit_min;
 
             //----------------------------------------------------------------------------
             // Read the I/O data
@@ -629,36 +552,6 @@ namespace HMI {
             for (int i = 0; i != 16; i++) dgvInput.Rows[i].Cells[1].Value = ((MotorIOData.DIch & (1 << i)) != 0) ? 1 : 0;
             // Output
             for (int i = 0; i != 16; i++) dgvOutput.Rows[i].Cells[1].Value = ((MotorIOData.DOch & (1 << i)) != 0) ? 1 : 0;
-            // old code
-            /*
-            // input
-            if (cbInput.SelectedIndex == 0) {
-                BitArray bitsDI0 = new BitArray(new byte[] { MotorIOData.DI0 });
-                BitArray bitsDI1 = new BitArray(new byte[] { MotorIOData.DI1 });
-                for (int i = 0; i < 8; i++) dgvInput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDI0[i]);
-                for (int i = 8; i < 16; i++) dgvInput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDI1[i - 8]);
-            }
-            else {
-                BitArray bitsDI2 = new BitArray(new byte[] { MotorIOData.DI2 });
-                BitArray bitsDI3 = new BitArray(new byte[] { MotorIOData.DI3 });
-                for (int i = 0; i < 8; i++) dgvInput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDI2[i]);
-                for (int i = 8; i < 16; i++) dgvInput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDI3[i - 8]);
-            }
-
-            // output
-            if (cbOutput.SelectedIndex == 0) {
-                BitArray bitsDO0 = new BitArray(new byte[] { MotorIOData.DO0 });
-                BitArray bitsDO1 = new BitArray(new byte[] { MotorIOData.DO1 });
-                for (int i = 0; i < 8; i++) dgvOutput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDO0[i]);
-                for (int i = 8; i < 16; i++) dgvOutput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDO1[i - 8]);
-            }
-            else {
-                BitArray bitsDO2 = new BitArray(new byte[] { MotorIOData.DO2 });
-                BitArray bitsDO3 = new BitArray(new byte[] { MotorIOData.DO3 });
-                for (int i = 0; i < 8; i++) dgvOutput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDO2[i]);
-                for (int i = 8; i < 16; i++) dgvOutput.Rows[i].Cells[1].Value = Convert.ToInt32(bitsDO3[i - 8]);
-            }
-            */
 
             //Debug.WriteLine(CmdData.ACSTAT);
 
