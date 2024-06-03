@@ -38,7 +38,7 @@ using namespace std::chrono;
 // Initialize shared memory
 //----------------------------------------------------------------------------
 MMFHandler<MotorIOStruct> MotorIOMMF("MotorIOFileMap", L"MotorIOMut");
-MMFHandler<CmdStruct> CmdMMF("CmdFileMap", L"MotorIOMut");
+MMFHandler<CmdStruct> CmdMMF("CmdFileMap", L"CmdMut");
 MotorIOStruct* MotorIOData = new MotorIOStruct;
 CmdStruct* CmdData = new CmdStruct;
 
