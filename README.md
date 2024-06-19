@@ -1,12 +1,15 @@
-How to run the code:
-1. install WMX with default installation dir (https://www.movensys.com/solutions/core_technology/wmx)
-2. build the MotionControl program
-3. copy settings\\IMDll.dll >> MotionControl\\x64\\Debug
-4. run the HMI program
-5. enjoy :)
+## WMX Motion Control Interface
+
+## How to run the code:
+1. install WMX motion control library with default installation dir https://www.movensys.com/solutions/core_technology/wmx
+2. open MotionControl.sln and build the program
+3. open HMI.sln, build and run the program
+4. enjoy :)
 
 
+## Update log before first commit
 ====== MotionControl (Full Stack) - AutoCycle ====== 
+
 This project is the updated version of MotionControl - Costum Class2 project with added new tab.
 Project log:
 - MotionControl->SingleMotorAxis.hpp contain: motor class, input class and output class
@@ -35,7 +38,7 @@ Project log:
 	- in the MotionControl project folder for local run
 	- in the same folder with HMI.exe for running from HMI (i think this is more important because usually run from HMI)
 
-UPDATE:
+Latest update:
 - change file name to main
 - seperate motor and IO class
 so in the main we initialize the wmxlib and start communication then we pass the reference of the wmxlib to motor and I/O class. then since that class inherit from the wmx module then in the constructor initializer we pass the wmxlib to the respective module.
