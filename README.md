@@ -1,11 +1,40 @@
 ## WMX Motion Control Interface
 
-## How to run the code:
-1. install WMX motion control library with default installation dir https://www.movensys.com/solutions/core_technology/wmx
-2. open MotionControl.sln and build the program
-3. open HMI.sln, build and run the program
-4. enjoy :)
+This project demonstrates the use of the WMX motion control library through a combination of a C++ app and a WinForm application.
 
+- C++ application (MotionControl): Implements the WMX motion control library, handling all motion control functionalities.
+- WinForm application (HMI): Serves as the user interface, enabling users to interact with and control the motion system.
+
+Key features:
+
+- I/O control and monitoring
+- Motor control (manual or auto) and monitoring
+- Customizable motor/axis name and count
+- Logging functionality
+- Shared memory for communication between C++ and WinForm applications
+
+## How to run the code:
+1. Install WMX motion control library with default installation dir https://www.movensys.com/solutions/core_technology/wmx
+2. Open `MotionControl.sln` and build the program
+3. Open `HMI.sln`, build and run the program
+4. On the `Job List` tab click the `Browse` button and select the `joblist` folder (\practice_fullstack_WMX\HMI\joblist)
+5. Enjoy :)
+
+## Preview
+
+<p align="center">
+  <img src="/figures/job_list_tab.png" style="width:500px;"/>
+  <img src="/figures/hardware_status_tab.png" style="width:500px;"/>
+</p>
+
+<p align="center">
+  <img src="/figures/motor_command_tab.png" style="width:500px;"/>
+  <img src="/figures/auto_cycle_tab.png" style="width:500px;"/>
+</p>
+
+<p align="center">
+  <img src="/figures/console.png" style="width:500px;"/>
+</p>
 
 ## Update log before first commit
 ====== MotionControl (Full Stack) - AutoCycle ====== 
